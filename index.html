@@ -14,7 +14,7 @@
         <nav class="nav">
             <img src="./img/pokemon-23.svg" alt="Logo Pokedex">
             <ul class="nav-list">
-                <li class="nav-item"><button class="btn btn-header" id="ver-todos">Ver todos</button></li>
+                <li class="nav-item"><button class="btn btn-header disabled:opacity-50" id="ver-todos">Ver todos</button></li>
                 <li class="nav-item"><button class="btn btn-header normal" id="normal">Normal</button></li>
                 <li class="nav-item"><button class="btn btn-header fire" id="fire">Fire</button></li>
                 <li class="nav-item"><button class="btn btn-header water" id="water">Water</button></li>
@@ -40,7 +40,7 @@
         <div class="container mx-auto p-4">
             <h1 class="text-4xl font-bold text-center mb-8">Pokémon App</h1>
             <form id="search-form" class="grid grid-cols-2 grid-cols-4 mb-4 ">
-                <input type="text" id="search-input" class="border p-2 rounded-l col-span-1 col-start-2"
+                <input type="text" id="search-input" class="border p-2 rounded-l lg:col-span-1 lg:col-start-2 col-start-1 col-span-3"
                     placeholder="Buscar Pokémon por nombre o ID"> 
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r col-span-1">Buscar</button>
             </form>

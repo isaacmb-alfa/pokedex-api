@@ -1,42 +1,58 @@
 const botonesHeader = document.querySelectorAll('.btn-header');
 const container = document.getElementById('pokemon-container');
+const botonVerTodos = document.getElementById('ver-todos');
 
 let nextUrl = 'https://pokeapi.co/api/v2/pokemon?limit=12&offset=0';
+let isFetching = false;
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function fetchPokemonData(url) {
+    if (isFetching) return; // Si ya estamos realizando una petición, salimos de la función
+    isFetching = true; // Indicamos que estamos realizando una petición
+    botonVerTodos.setAttribute('disabled', 'disabled');
     try {
         const response = await fetch(url);
         const data = await response.json();
         if (data.pokemon) {
-            displayPokemon(data.pokemon, true);
+            await displayPokemon(data.pokemon, true); // Esperamos a que displayPokemon termine
         } else {
-            displayPokemon(data.results);
+            await displayPokemon(data.results);
         }
         nextUrl = data.next;
     } catch (error) {
         console.error('Error:', error);
+    } finally {
+        isFetching = false; // Indicamos que hemos terminado la petición
+        botonVerTodos.removeAttribute('disabled');
     }
 }
 
 async function displayPokemon(pokemons, isNested = false) {
     isNested ? limpiarHTML() : '';
+
     for (let pokemon of pokemons) {
         try {
             let data;
             if (isNested && pokemon.pokemon) {
                 const response = await fetch(pokemon.pokemon.url);
                 data = await response.json();
+                await delay(100); // Retardo de 2 segundos
                 imprimirPokemones(data);
             } else {
                 const response = await fetch(pokemon.url);
                 data = await response.json();
+                await delay(100); // Retardo de 2 segundos
                 imprimirPokemones(data);
             }
         } catch (error) {
             console.error('Error:', error);
         }
-    };
-
+    }
 }
+
 
 function imprimirPokemones(data) {
     let tipos = data.types.map(type => `<p class="${type.type.name} text-sm uppercase tipo">${type.type.name}</p>`);
@@ -62,8 +78,8 @@ function imprimirPokemones(data) {
                 ${tipos}  
               </div>
               <div class="pokemon-stats mx-auto">
-                <p class="stat">${data.height} m</p>
-                <p class="stat">${data.weight} KG</p>
+                <p class="stat">${(data.height / 10)} m</p>
+                <p class="stat">${(data.weight / 10)} KG</p>
               </div>
               </a>
               </div>
