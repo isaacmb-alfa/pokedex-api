@@ -8,7 +8,8 @@ const appState = {
     activeFilter: 'ver-todos',
     isTypeFilter: false,
     expectedCount: 12,
-    retryCallback: null
+    retryCallback: null,
+    isFetching: false
 };
 
 function debounce(fn, delay) {
@@ -75,13 +76,15 @@ function mostrarCargarMas() {
     appState.isTypeFilter = false;
 }
 
-async function fetchPokemonData(url) {
-    mostrarSkeletons();
+async function fetchPokemonData(url, append = false) {
+    if (appState.isFetching) return;
+    appState.isFetching = true;
+    if (!append) mostrarSkeletons();
     botonVerTodos.setAttribute('disabled', 'disabled');
     try {
         const response = await fetch(url);
         const data = await response.json();
-        eliminarSkeletons();
+        if (!append) eliminarSkeletons();
         if (data.pokemon) {
             await displayPokemon(data.pokemon, true);
         } else {
@@ -91,15 +94,18 @@ async function fetchPokemonData(url) {
         appState.nextUrl = data.next;
         appState.retryCallback = null;
     } catch (error) {
-        eliminarSkeletons();
-        mostrarErrorCard('Error al cargar los Pokémon. Verifica tu conexión.', () => fetchPokemonData(url));
+        if (!append) eliminarSkeletons();
+        if (!append) {
+            mostrarErrorCard('Error al cargar los Pokémon. Verifica tu conexión.', () => fetchPokemonData(url));
+        }
     } finally {
+        appState.isFetching = false;
         botonVerTodos.removeAttribute('disabled');
     }
 }
 
 async function displayPokemon(pokemons, isNested = false) {
-    isNested ? limpiarHTML() : '';
+    if (isNested) limpiarHTML();
     for (let pokemon of pokemons) {
         try {
             let data;
@@ -128,23 +134,39 @@ function imprimirPokemones(data) {
     const tipoPrincipal = data.types[0].type.name;
     card.className = `pokemon-card ${tipoPrincipal}-bg p-4 rounded-lg shadow-md card-fade-in`;
     const imagen = data.sprites.other["official-artwork"].front_default || data.sprites.other["official-artwork"].front_shiny || data.sprites.other.home.front_default || data.sprites.front_default;
+    const spriteUrl = data.sprites.front_default || '';
+    const cryUrl = data.cries?.latest || data.cries?.legacy || '';
 
     card.innerHTML = `
             <div class="pokemon">
             <a href="javascript:void(0);" onclick="showModal(${data.id})">
                 <p class="pokemon-id-back">#${data.id}</p>
-              <img class="pokemon-imagen w-full h-full object-cover mb-2 rounded-t-lg" src="${imagen}" alt="${data.name}">
-              <div class="flex justify-content-center">
-                <p class="text-sm text-gray-600 pokemon-id ms-4">#${data.id}</p>
-                <h2 class="text-2xl font-bold uppercase mx-auto">${data.name}</h2>
-              </div>
-              <div class="pokemon-tipos mb-2">
-                ${tipos}  
-              </div>
-              <div class="pokemon-stats mx-auto">
-                <p class="stat">${(data.height / 10)} m</p>
-                <p class="stat">${(data.weight / 10)} KG</p>
-              </div>
+                <div class="pokemon-card-inner">
+                    <div class="pokemon-sprite-col">
+                        <img class="pokemon-sprite" src="${spriteUrl}" alt="${data.name} sprite">
+                        <button class="audio-btn" onclick="event.stopPropagation(); playCry('${cryUrl}')" title="Play cry">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+                                <path d="M16 7.5c1.5 2 1.5 7 0 9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                <path d="M19 5c3 3 3 11 0 14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="pokemon-info-col">
+                        <img class="pokemon-imagen w-full h-full object-cover mb-2 rounded-t-lg" src="${imagen}" alt="${data.name}">
+                        <div class="flex justify-content-center items-center">
+                            <p class="text-sm text-gray-600 pokemon-id ms-4">#${data.id}</p>
+                            <h2 class="text-2xl font-bold uppercase mx-auto">${data.name}</h2>
+                        </div>
+                        <div class="pokemon-tipos mb-2">
+                            ${tipos}  
+                        </div>
+                        <div class="pokemon-stats mx-auto">
+                            <p class="stat">${(data.height / 10)} m</p>
+                            <p class="stat">${(data.weight / 10)} KG</p>
+                        </div>
+                    </div>
+                </div>
               </a>
               </div>
             `;
@@ -154,13 +176,21 @@ function imprimirPokemones(data) {
 
 document.getElementById('load-more').addEventListener('click', () => {
     if (appState.nextUrl) {
-        fetchPokemonData(appState.nextUrl);
+        fetchPokemonData(appState.nextUrl, true);
     } else {
         mostrarErrorCard('No hay más Pokémon para cargar', null);
     }
 });
 
 fetchPokemonData(appState.lastUrl);
+
+const scrollSentinel = document.getElementById('scroll-sentinel');
+const sentinelObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && appState.nextUrl && !appState.isTypeFilter && !appState.isFetching) {
+        fetchPokemonData(appState.nextUrl, true);
+    }
+}, { rootMargin: '200px' });
+sentinelObserver.observe(scrollSentinel);
 
 botonesHeader.forEach(boton => boton.addEventListener('click', (e) => {
     const id = e.currentTarget.id;
@@ -187,6 +217,7 @@ const debouncedSearch = debounce((query) => {
 }, 300);
 
 async function searchPokemon(query) {
+    appState.nextUrl = null;
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`);
         if (!response.ok) throw new Error('No encontrado');
@@ -208,6 +239,13 @@ document.getElementById('search-form').addEventListener('submit', (e) => {
         debouncedSearch(query);
     }
 });
+
+function playCry(url) {
+    if (!url) return;
+    const audio = new Audio(url);
+    audio.volume = 0.5;
+    audio.play().catch(err => console.error('Error reproduciendo audio:', err));
+}
 
 async function fetchPokemonDetail(pokemonId) {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);

@@ -311,10 +311,8 @@ main {
     /* Full height */
     overflow: auto;
     /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0);
-    /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.8);
-    /* Black w/ opacity */
+    background-color: rgba(255, 203, 5, 0.85);
+    /* Yellow w/ opacity */
 }
 
 .modal-content {
@@ -328,6 +326,7 @@ main {
     /* Maximum width for the modal */
     border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .close {
@@ -435,6 +434,72 @@ main {
 .pokemon-card:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* Card Inner Layout */
+.pokemon-card-inner {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.pokemon-sprite-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 64px;
+    padding-top: 8px;
+}
+
+.pokemon-sprite {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+    animation: sprite-bob 1.5s ease-in-out infinite;
+}
+
+@keyframes sprite-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.pokemon-info-col {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Audio Button */
+.audio-btn {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+    color: var(--clr-black);
+}
+
+.audio-btn:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(1.15);
+}
+
+.audio-btn:active {
+    transform: scale(0.9);
+}
+
+.audio-btn.playing svg {
+    animation: audio-pulse 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes audio-pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
 }
 
 /* Stat Bars */
