@@ -134,28 +134,34 @@ function imprimirPokemones(data) {
     const tipoPrincipal = data.types[0].type.name;
     card.className = `pokemon-card ${tipoPrincipal}-bg p-4 rounded-lg shadow-md card-fade-in`;
     const imagen = data.sprites.other["official-artwork"].front_default || data.sprites.other["official-artwork"].front_shiny || data.sprites.other.home.front_default || data.sprites.front_default;
-    const spriteUrl = data.sprites.front_default || '';
+    const spriteUrl = data.sprites.other.showdown.front_default || '';
     const cryUrl = data.cries?.latest || data.cries?.legacy || '';
 
-    card.innerHTML = `
+card.innerHTML = `
             <div class="pokemon">
             <a href="javascript:void(0);" onclick="showModal(${data.id})">
                 <p class="pokemon-id-back">#${data.id}</p>
                 <div class="pokemon-card-inner">
-                    <div class="pokemon-sprite-col">
-                        <img class="pokemon-sprite" src="${spriteUrl}" alt="${data.name} sprite">
-                        <button class="audio-btn" onclick="event.stopPropagation(); playCry('${cryUrl}')" title="Play cry">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                                <path d="M3 9v6h4l5 5V4L7 9H3z"/>
-                                <path d="M16 7.5c1.5 2 1.5 7 0 9" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                                <path d="M19 5c3 3 3 11 0 14" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                            </svg>
-                        </button>
+                    <!-- Row 1: Images - Two Columns -->
+                    <div class="pokemon-images-row">
+                        <div class="pokemon-sprite-col">
+                            <img class="pokemon-sprite" src="${spriteUrl}" alt="${data.name} sprite">
+                            <button class="audio-btn" onclick="event.stopPropagation(); playCry('${cryUrl}')" title="Play cry">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                    <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+                                    <path d="M16 7.5c1.5 2 1.5 7 0 9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <path d="M19 5c3 3 3 11 0 14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="pokemon-main-col">
+                            <img class="pokemon-imagen w-full h-full object-cover mb-2 rounded-t-lg" src="${imagen}" alt="${data.name}">
+                        </div>
                     </div>
-                    <div class="pokemon-info-col">
-                        <img class="pokemon-imagen w-full h-full object-cover mb-2 rounded-t-lg" src="${imagen}" alt="${data.name}">
-                        <div class="flex justify-content-center items-center">
-                            <p class="text-sm text-gray-600 pokemon-id ms-4">#${data.id}</p>
+                    <!-- Row 2: Text Content - Centered -->
+                    <div class="pokemon-text-row justify-between flex">
+                        <div class="flex justify-center items-center space-x-4">
+                            <p class="text-sm text-gray-600 pokemon-id mx-auto">#${data.id}</p>
                             <h2 class="text-2xl font-bold uppercase mx-auto">${data.name}</h2>
                         </div>
                         <div class="pokemon-tipos mb-2">
@@ -169,7 +175,7 @@ function imprimirPokemones(data) {
                 </div>
               </a>
               </div>
-            `;
+    `;
 
     container.appendChild(card);
 }
@@ -266,7 +272,8 @@ async function showModal(pokemonId) {
         document.getElementById('modal-img-oficial').src = imgSrc;
         document.getElementById('modal-img-oficial').alt = data.name;
 
-        const shinySrc = data.sprites.other['official-artwork'].front_shiny
+        const shinySrc = data.sprites.other.showdown.front_default
+            ?? data.sprites.other['official-artwork'].front_shiny
             ?? data.sprites.front_shiny;
         if (shinySrc) {
             document.getElementById('modal-img-shiny').src = shinySrc;

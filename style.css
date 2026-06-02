@@ -425,6 +425,18 @@ main {
     animation: fadeIn 0.4s ease-out both;
 }
 
+/* Evita que el translateY del fadeIn afecte a las imágenes GIF internas.
+   Se usa un counter-transform para que la imagen permanezca estática
+   respecto a la pantalla mientras la card hace su entrada. */
+.card-fade-in img {
+    animation: fadeInImgCounter 0.4s ease-out both;
+}
+
+@keyframes fadeInImgCounter {
+    from { transform: translateY(-12px); }
+    to   { transform: translateY(0); }
+}
+
 /* Card Hover */
 .pokemon-card {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -436,8 +448,15 @@ main {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
-/* Card Inner Layout */
+/* Card Inner Layout - Two Rows */
 .pokemon-card-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Row 1: Images - Two Columns */
+.pokemon-images-row {
     display: flex;
     gap: 8px;
     align-items: flex-start;
@@ -449,12 +468,11 @@ main {
     align-items: center;
     gap: 6px;
     min-width: 64px;
-    padding-top: 8px;
 }
 
 .pokemon-sprite {
-    width: 64px;
-    height: 64px;
+    width: 40px;
+    height: 40px;
     image-rendering: pixelated;
     animation: sprite-bob 1.5s ease-in-out infinite;
 }
@@ -464,9 +482,19 @@ main {
     50% { transform: translateY(-6px); }
 }
 
-.pokemon-info-col {
+.pokemon-main-col {
     flex: 1;
     min-width: 0;
+}
+
+/* Row 2: Text Content - Centered Full Width */
+.pokemon-text-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    padding-top: 8px;
 }
 
 /* Audio Button */
