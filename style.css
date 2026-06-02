@@ -321,12 +321,13 @@ main {
     background-color: #fefefe;
     margin: 10% auto;
     /* Center the modal */
-    padding: 20px;
     border: 1px solid #888;
     width: 80%;
     /* Adjust width for larger space */
     max-width: 600px;
     /* Maximum width for the modal */
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .close {
@@ -340,4 +341,152 @@ main {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* Skeleton Cards */
+.skeleton-card {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.skeleton {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 120px;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin: 0.5rem 0;
+    width: 70%;
+}
+
+.skeleton-text-sm {
+    height: 0.75rem;
+    width: 50%;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.shimmer {
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Active Filter */
+.btn-header.active {
+    outline: 3px solid currentColor;
+    opacity: 1;
+    font-weight: 800;
+    box-shadow: 0 0 2rem rgba(0, 0, 0, .35);
+}
+
+#ver-todos.active {
+    outline-color: #3b82f6;
+}
+
+/* Type Backgrounds */
+.normal-bg { background-color: var(--type-normal); color: var(--clr-black); }
+.fire-bg { background-color: var(--type-fire); color: var(--clr-black); }
+.water-bg { background-color: var(--type-water); color: var(--clr-white); }
+.grass-bg { background-color: var(--type-grass); color: var(--clr-black); }
+.electric-bg { background-color: var(--type-electric); color: var(--clr-black); }
+.ice-bg { background-color: var(--type-ice); color: var(--clr-black); }
+.fighting-bg { background-color: var(--type-fighting); color: var(--clr-white); }
+.poison-bg { background-color: var(--type-poison); color: var(--clr-white); }
+.ground-bg { background-color: var(--type-ground); color: var(--clr-black); }
+.flying-bg { background-color: var(--type-flying); color: var(--clr-black); }
+.psychic-bg { background-color: var(--type-psychic); color: var(--clr-black); }
+.bug-bg { background-color: var(--type-bug); color: var(--clr-black); }
+.rock-bg { background-color: var(--type-rock); color: var(--clr-black); }
+.ghost-bg { background-color: var(--type-ghost); color: var(--clr-white); }
+.dark-bg { background-color: var(--type-dark); color: var(--clr-white); }
+.dragon-bg { background-color: var(--type-dragon); color: var(--clr-white); }
+.steel-bg { background-color: var(--type-steel); color: var(--clr-black); }
+.fairy-bg { background-color: var(--type-fairy); color: var(--clr-black); }
+
+/* FadeIn Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card-fade-in {
+    animation: fadeIn 0.4s ease-out both;
+}
+
+/* Card Hover */
+.pokemon-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.pokemon-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* Stat Bars */
+.stat-bar {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.stat-bar.hp .stat-bar-fill { background-color: #22c55e; }
+.stat-bar.attack .stat-bar-fill { background-color: #ef4444; }
+.stat-bar.defense .stat-bar-fill { background-color: #3b82f6; }
+.stat-bar.special-attack .stat-bar-fill { background-color: #f97316; }
+.stat-bar.special-defense .stat-bar-fill { background-color: #06b6d4; }
+.stat-bar.speed .stat-bar-fill { background-color: #eab308; }
+
+/* Modal Header */
+.modal-header {
+    border-radius: 8px 8px 0 0;
+    color: var(--clr-white);
+}
+
+.modal-header h2 {
+    color: var(--clr-black);
+}
+
+/* Modal Animations */
+@keyframes modalEntrada {
+    from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes modalSalida {
+    from { opacity: 1; transform: scale(1) translateY(0); }
+    to { opacity: 0; transform: scale(0.9) translateY(-20px); }
+}
+
+.modal-content {
+    transform-origin: center top;
+}
+
+.modal-content.modal-entrada {
+    animation: modalEntrada 0.3s ease-out both;
+}
+
+.modal-content.modal-salida {
+    animation: modalSalida 0.2s ease-out both;
 }
