@@ -319,14 +319,14 @@ main {
     background-color: #fefefe;
     margin: 10% auto;
     /* Center the modal */
-    border: 1px solid #888;
+    border: 8px solid #ffcb03;
     width: 80%;
     /* Adjust width for larger space */
     max-width: 600px;
     /* Maximum width for the modal */
-    border-radius: 8px;
+    border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 10px 20px 60px rgba(0, 0, 0, 0.5);
 }
 
 .close {

@@ -134,10 +134,24 @@ function imprimirPokemones(data) {
     const tipoPrincipal = data.types[0].type.name;
     card.className = `pokemon-card ${tipoPrincipal}-bg p-4 rounded-lg shadow-md card-fade-in`;
     const imagen = data.sprites.other["official-artwork"].front_default || data.sprites.other["official-artwork"].front_shiny || data.sprites.other.home.front_default || data.sprites.front_default;
-    const spriteUrl = data.sprites.other.showdown.front_default || '';
+
+    // DEBUG: Check all sprite URLs available
+    // console.log('=== DEBUG SPRITE URLs ===');
+    // console.log('Pokemon:', data.name, 'ID:', data.id);
+    // console.log('generation-v black-white:', data.sprites.versions['generation-v']['black-white'].animated.front_default);
+    // console.log('showdown:', data.sprites.other.showdown.front_default);
+    // console.log('official-artwork:', data.sprites.other["official-artwork"].front_default);
+    // console.log('front_default:', data.sprites.front_default);
+
+    // Fix: Declare spriteUrlAlt BEFORE spriteUrl
+    const spriteUrlAlt = data.sprites.versions['generation-v']['black-white'].animated.front_default || '';
+    const spriteUrl = spriteUrlAlt || data.sprites.other.showdown.front_default || '';
     const cryUrl = data.cries?.latest || data.cries?.legacy || '';
 
-card.innerHTML = `
+    // console.log('Final spriteUrl:', spriteUrl, '| spriteUrlAlt:', spriteUrlAlt);
+    // console.log('=======================');
+
+    card.innerHTML = `
             <div class="pokemon">
             <a href="javascript:void(0);" onclick="showModal(${data.id})">
                 <p class="pokemon-id-back">#${data.id}</p>
@@ -271,12 +285,13 @@ async function showModal(pokemonId) {
             ?? data.sprites.front_default;
         document.getElementById('modal-img-oficial').src = imgSrc;
         document.getElementById('modal-img-oficial').alt = data.name;
-
+        // DEBUG: Log the shiny sprite sources
+        const shinySrcAlt = data.sprites.versions['generation-v']['black-white'].animated.front_default || '';
         const shinySrc = data.sprites.other.showdown.front_default
             ?? data.sprites.other['official-artwork'].front_shiny
             ?? data.sprites.front_shiny;
         if (shinySrc) {
-            document.getElementById('modal-img-shiny').src = shinySrc;
+            document.getElementById('modal-img-shiny').src =  shinySrcAlt || shinySrc || '';
             document.getElementById('modal-img-shiny').alt = `${data.name} shiny`;
         }
 
